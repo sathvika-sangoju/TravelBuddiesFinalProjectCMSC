@@ -1,1 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Application Confirmation</title>
+    <style>
+    
+        body {
+            background-color: lightblue;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    
+        h2{
+            text-decoration: underline;
+        }
 
+        #reset,#submit{
+            font-size: 15px;
+        }
+
+        .weather-info{
+            text-align: left;
+            align-items: left;
+            margin: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adds a shadow for a better visual */
+        }
+    
+    </style>
+</head>
+<body>
+	<h2>Passenger Data</h2>
+    <strong>Name: </strong><%- name %><br>
+    <strong>Age: </strong><%- age %><br>
+    <strong>Gender: </strong><%- gender %><br><br>
+
+    <h2>Flight Details</h2>
+    <strong>Number of Travelers: </strong><%- numTravelers %><br>
+    <strong>Travel Start Date: </strong><%- startDate %><br>
+    <strong>Travel End Date: </strong><%- endDate %><br>
+    <strong>City you are traveling to: </strong><%- cities %><br>
+    <strong>Airport you are traveling from: </strong><%- airport %><br><br>
+
+    <h2>Current Weather at your Destination: </h2>
+    <label for="location">Choose the City you are going to:</label>
+        <select name="location" id="location">
+        <option value="" disabled selected>-- Select a City --</option>
+        <option value="Austin">Austin</option>
+        <option value="Atlanta">Atlanta</option>
+        <option value="Boston">Boston</option>
+        <option value="Chicago">Chicago</option>
+        <option value="Detroit">Detroit</option>
+        <option value="Las Vegas">Las Vegas</option>
+        <option value="Los Angeles">Los Angeles</option>
+        <option value="Miami">Miami</option>
+        <option value="New York">New York</option>
+        <option value="Pheonix">Pheonix</option>        
+        <option value="San Francisco">San Francisco</option>
+        <option value="Seattle">Seattle</option>
+        <option value="Washington D.C.">Washington D.C.</option>
+        </select>
+    <button onclick="fetchWeather()">Get Weather</button>
+    <div id="output"></div>
+
+    <h2>Additional Information:</h2>
+    <%- additionalInfo %><br>
+
+</body>
+
+<script>
+    async function fetchWeather() {
+        try {
+            // Get the location from the input field or default to New York
+            const query = document.getElementById('location').value;
+
+            // Fetch weather data from the server
+            const response = await fetch(`/weather?query=${query}`);
+            const data = await response.json();
+
+            // Handle any API errors
+            if (data.error) {
+                document.getElementById('output').innerText = `Error: ${data.error.info}`;
+            } else {
+                // Format and display the weather data
+                document.getElementById('output').innerHTML = `
+                    <div class="weather-info">
+                        <p><strong>Location:</strong> ${data.location.name}, ${data.location.country}</p>
+                        <p><strong>Temperature:</strong> ${data.current.temperature}°C</p>
+                        <p><strong>Weather:</strong> ${data.current.weather_descriptions.join(', ')}</p>
+                        <p><strong>Wind Speed:</strong> ${data.current.wind_speed} km/h</p>
+                        <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
+                    </div>
+                `;
+
+            }
+        } catch (err) {
+            console.error('Error fetching weather:', err);
+            document.getElementById('output').innerText = 'Error fetching weather data.';
+        }
+    }
+</script>
+
+</html>

@@ -1,1 +1,146 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Travel</title>
+  <style>
+    
+    body {
+        background-color: lightblue;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    form,h2 {
+        margin: 20px auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        width: 80%;
+        max-width: 700px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adds a shadow for a better visual */
+    }
+
+    h3{
+        text-decoration: underline;
+    }
+
+    label{
+        font-size: 18px;
+    }
+
+    #spacer{
+        color: rgba(248,251,252);
+    }
+
+    #reset,#submit{
+        font-size: 15px;
+    }
+
+</style>
+</head>
+
+<body>
+  <h2>⋆｡✈︎⋆｡ ﾟ☾ ﾟ｡⋆ Passenger Info and Travel Information ⋆｡✈︎⋆｡ ﾟ☾ ﾟ｡⋆</h2>
+  <form action="http://localhost:<%- portNumber %>/ticketInput" method="post">
+    <fieldset>      
+      <h3>User Information</h3>
+      <label>Name: <input type="text" name="name" placeholder="e.g.Jane Doe" required></label><br><br>
+      <label>Age: <input type="text" name="age" placeholder="e.g. 20" required></label><br><br>
+
+      <label name="gender">Gender:</label>
+      <input type="radio" id="female" name="gender" value="Female"> Female </input>
+      <input type="radio" id="male" name="gender" value="Male"> Male </input>
+      <input type="radio" id="nonbinary" name="gender" value="NonBinary"> Non-Binary </input>
+      <input type="radio" id="other" name="gender" value="Other"> Other </input>
+      <input type="radio" id="preferNotToSay" name="gender" value="PreferNotToSay"> Prefer Not to Say</input>
+            
+      <h3>Flight Details</h3>
+      <label>Number of Travelers: <input type="number" step="1" name="numTravelers" placeholder="e.g. 1" required></label><br><br>
+      <label>Start Date: <input type="date" id="startDate" name="startDate" required></label>
+      <label id="spacer">......</label>
+      <label>End Date: <input type="date" id="endDate" name="endDate" required></label><br><br>
+
+      <label for="cities">Choose a City:</label>
+        <select name="cities" id="cities">
+        <option value="" disabled selected>-- Select a City --</option>
+        <option value="Austin">Austin</option>
+        <option value="Atlanta">Atlanta</option>
+        <option value="Boston">Boston</option>
+        <option value="Chicago">Chicago</option>
+        <option value="Detroit">Detroit</option>
+        <option value="Las Vegas">Las Vegas</option>
+        <option value="Los Angeles">Los Angeles</option>
+        <option value="Miami">Miami</option>
+        <option value="New York">New York</option>
+        <option value="Pheonix">Pheonix</option>        
+        <option value="San Francisco">San Francisco</option>
+        <option value="Seattle">Seattle</option>
+        <option value="Washington D.C.">Washington D.C.</option>
+        </select>
+        <br><br>
+
+        <label for="airport">Choose an Airport:</label>
+        <select name="airport" id="airport">
+        <option value="" disabled selected>-- Select an Airport --</option>
+        <option value="Washington Dulles International (IAD)"> Washington Dulles International (IAD)</option>
+        <option value="Baltimore/Washington International Thurgood Marshall Airport (BWI)"> Baltimore/Washington International Thurgood Marshall Airport (BWI)</option>
+        <option value="Ronald Reagan Washington Airport (DCA)"> Ronald Reagan Washington Airport (DCA)</option>
+        </select>
+        
+      <h3>Additional Information</h3>
+      <textarea name="additionalInfo" rows="7" cols="81" placeholder="Packing List, Allergies, Preferences, etc."></textarea><br><br>
+    </fieldset><br>
+
+    <input type="reset" id="reset" value="Reset Information" onclick="resetSubmission()"/>
+    <label id="spacer">..</label>
+	<input type="submit" id="submit" value="Submit Information" onclick="confirmSubmission()">
+  </form>
+</body>
+
+<script>
+  function resetSubmission(event) {
+    const reset = window.confirm("Are you sure you want to RESET your application?\nChanges from this version will not be saved");
+    if (!reset) {
+      event.preventDefault(); 
+    }
+  }
+
+  function confirmSubmission(event) {
+    const confirmed = window.confirm("Are you sure you want to SUBMIT your application?\nYou will not be able to change your information once submitted.");
+    if (!confirmed) {
+      event.preventDefault(); 
+    }
+  }
+
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    startDateInput.addEventListener('change', () => {
+      if (startDateInput.value) {
+        const startDate = new Date(startDateInput.value);
+
+        // Set max date for endDate to 10 days after startDate
+        const maxDate = new Date(startDate);
+        maxDate.setDate(startDate.getDate() + 10);
+        endDateInput.max = maxDate.toISOString().split('T')[0];
+
+        // Set min date for endDate to the same as startDate
+        endDateInput.min = startDate.toISOString().split('T')[0];
+      }
+    });
+
+    endDateInput.addEventListener('change', () => {
+      const startDate = new Date(startDateInput.value);
+      const endDate = new Date(endDateInput.value);
+
+      // Check if endDate is before startDate
+      if (endDate < startDate) {
+        alert('End date cannot be before the start date.');
+        endDateInput.value = ''; // Reset the invalid value
+      }
+    });
+</script>
+</html>
