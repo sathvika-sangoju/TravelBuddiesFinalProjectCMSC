@@ -5,6 +5,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: path.resolve(__dirname, '.env') });
 const app = express();
+app.use(express.static(path.join(__dirname, 'public')));
 app.set("views", path.resolve(__dirname, "templates"));
 app.set("view engine", "ejs");
 
@@ -12,30 +13,30 @@ const uri = process.env.MONGO_CONNECTION_STRING;
 const databaseAndCollection = { db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION };
 
 const { MongoClient } = require('mongodb');
-
-if (process.argv.length != 3) {
-    process.exit(0);
-}
-
 let prompt = "Type 'stop' to shutdown the server: ";
 let exitMessage = "Shutting down the server";
-let portNumber = process.argv[2];
+
+// Use the PORT environment variable provided by Render, or default to 4000 for local development
+let portNumber = process.env.PORT || 4000;
 
 console.log(`Web server started and running at http://localhost:${portNumber}`);
 
-process.stdout.write(prompt);
-process.stdin.on("readable", function () {
-    let input = process.stdin.read();
-    if (input !== null) {
-        let command = String(input).trim();
-        if (command == "stop") {
-            process.stdout.write(exitMessage);
-            process.exit(0);
+// Only show the "stop" prompt in local development
+if (!process.env.PORT) {
+    process.stdout.write(prompt);
+    process.stdin.on("readable", function () {
+        let input = process.stdin.read();
+        if (input !== null) {
+            let command = String(input).trim();
+            if (command === "stop") {
+                process.stdout.write(exitMessage);
+                process.exit(0);
+            }
+            process.stdout.write(prompt);
+            process.stdin.resume();
         }
-        process.stdout.write(prompt);
-        process.stdin.resume();
-    }
-});
+    });
+}
 
 // ENDPOINTS
 app.use(bodyParser.urlencoded({extended:false}));
