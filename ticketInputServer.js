@@ -12,14 +12,19 @@ app.set("view engine", "ejs");
 const uri = process.env.MONGO_CONNECTION_STRING;
 const databaseAndCollection = { db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION };
 
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 let prompt = "Type 'stop' to shutdown the server: ";
 let exitMessage = "Shutting down the server";
 
-// Use the PORT environment variable provided by Render, or default to 4000 for local development
-let portNumber = process.env.PORT || 4000;
+// Use the PORT environment variable (Render), command-line argument (local override), or default to 4000
+let portNumber = process.env.PORT || process.argv[2] || 4000;
 
-console.log(`Web server started and running at http://localhost:${portNumber}`);
+// Check if the app is running locally or on Render
+if (process.env.PORT) {
+    console.log(`Web server started and running at https://travelbuddiesfinalprojectcmsc.onrender.com`);
+} else {
+    console.log(`Web server started and running at http://localhost:${portNumber}`);
+}
 
 // Only show the "stop" prompt in local development
 if (!process.env.PORT) {
