@@ -19,7 +19,7 @@ if (process.argv.length != 3) {
 
 let prompt = "Type 'stop' to shutdown the server: ";
 let exitMessage = "Shutting down the server";
-let portNumber = process.argv[2];
+let portNumber = process.env.PORT || process.argv[2];
 
 console.log(`Web server started and running at http://localhost:${portNumber}`);
 
